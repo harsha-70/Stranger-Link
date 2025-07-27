@@ -114,7 +114,7 @@ const ConnectStrangersApp = () => {
   return (
     <div className="flex flex-col h-screen w-full max-w-8xl mx-auto border border-gray-300 font-sans bg-indigo-700">
       <header className="p-5 bg-gradient-to-br from-indigo-700 via-indigo-500 to-indigo-700 text-white font-bold text-2xl text-center shadow-lg relative">
-        Stranger Link
+        Talk With Strangers
       </header>
 
       <main className=" flex-grow overflow-y-auto p-3 flex flex-col-reverse gap-2 bg-gradient-to-br from-indigo-200 via-gray-100 to-indigo-200">
