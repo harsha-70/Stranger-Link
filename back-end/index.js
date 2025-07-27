@@ -43,7 +43,7 @@ io.on("connection", (socket) => {
 
   // Handle disconnect
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    // console.log("User disconnected:", socket.id);
 
     // Remove from waiting queue if still waiting
     waitingQueue = waitingQueue.filter((s) => s !== socket);

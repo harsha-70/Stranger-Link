@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:5000";
+const SOCKET_URL = import.meta.env.VITE_BACKEND_URL;
 let socket;
 
 const ConnectStrangersApp = () => {
@@ -17,7 +17,7 @@ const ConnectStrangersApp = () => {
 
   useEffect(() => {
     socket = io(SOCKET_URL, { autoConnect: false });
-
+    console.log("Backend URL is:", import.meta.env.VITE_BACKEND_URL);
     socket.on("waiting", () => {
       setSearching(true);
       setDisconnectMsg("");
@@ -109,11 +109,11 @@ const ConnectStrangersApp = () => {
   };
 
   return (
+    
     <div className="flex flex-col h-screen w-full max-w-8xl mx-auto border border-gray-300 font-sans bg-indigo-700">
       <header className="p-5 bg-gradient-to-br from-indigo-700 via-indigo-500 to-indigo-700 text-white font-bold text-2xl text-center shadow-lg ">
           Stranger Link
         </header>
-
       <main className="flex-grow overflow-y-auto p-3 flex flex-col gap-2 bg-gradient-to-br from-indigo-200 via-gray-100 to-indigo-200">
         {searching && !connected && (
           <div className="self-center text-gray-500 italic">Searching for stranger...</div>
