@@ -10,7 +10,7 @@ const App = () => {
         <div className="flex flex-col justify-center items-center h-full text-center p-4">
           <h1 className="text-4xl font-bold mb-4 text-indigo-700">Welcome to Connect Strangers</h1>
           <p className="text-lg text-gray-700 mb-6 max-w-xl">
-            Connect instantly with a stranger across the globe. Click Start to begin a random anonymous conversation.
+            Step into a world of spontaneous connections. Connect Strangers lets you instantly chat with random people across the globe completely anonymously.  No sign-ups, no profiles click "Start" and get matched with a stranger in real time.
           </p>
           <button
             onClick={() => setStart(true)}

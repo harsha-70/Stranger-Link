@@ -57,7 +57,9 @@ const ConnectStrangersApp = () => {
   }, [messages, connected]);
 
   const handleStartStopClick = () => {
-    if (!connected && !searching) {
+  if (!connected) {
+    if (!searching) {
+      // Start searching
       if (!socket.connected) socket.connect();
       setSearching(true);
       setStopTapCount(0);
@@ -65,26 +67,35 @@ const ConnectStrangersApp = () => {
       setInput("");
       setDisconnectMsg("");
       socket.emit("find_partner");
-    } else if (connected) {
-      setStopTapCount((count) => {
-        const newCount = count + 1;
-        if (newCount >= 2) {
-          setConnected(false);
-          setRoomId(null);
-          setMessages([]);
-          setInput("");
-          setStopTapCount(0);
-          setDisconnectMsg("You disconnected the chat.");
-          if (socket.connected) socket.disconnect();
-          return 0;
-        }
-        return newCount;
-      });
+    } else {
+      // Stop searching before connected
+      setSearching(false);
+      setDisconnectMsg("You cancelled searching.");
+      if (socket.connected) socket.disconnect();
     }
-  };
+  } else if (connected) {
+    // Connected state: tap once, warn; tap twice, disconnect
+    setStopTapCount((count) => {
+      const newCount = count + 1;
+      if (newCount >= 2) {
+        setConnected(false);
+        setRoomId(null);
+        setMessages([]);
+        setInput("");
+        setStopTapCount(0);
+        setDisconnectMsg("You disconnected the chat.");
+        if (socket.connected) socket.disconnect();
+        return 0;
+      }
+      return newCount;
+    });
+  }
+};
+
 
   const handleSendMessage = () => {
     if (!input.trim() || !roomId || !connected) return;
+    setStopTapCount(0);
     socket.emit("send_message", { roomId, message: input });
     setMessages((prev) => [...prev, { you: true, msg: input }]);
     setInput("");
@@ -109,13 +120,13 @@ const ConnectStrangersApp = () => {
         )}
 
         {!connected && !searching && messages.length === 0 && !disconnectMsg && (
-          <div className="self-center text-gray-500 italic">
-            Tap start to connect strangers....
+          <div className="self-center text-gray-500 italic font-semibold">
+            Tap start to connect stranger....
           </div>
         )}
 
         {disconnectMsg && (
-          <div className="self-center text-red-600 italic font-semibold">
+          <div className="self-center text-gray-500 italic font-semibold">
             {disconnectMsg}
           </div>
         )}
@@ -139,18 +150,24 @@ const ConnectStrangersApp = () => {
 
       <div className="flex p-2 border-t border-gray-300 bg-white gap-2">
         <button
-          onClick={handleStartStopClick}
-          className={`basis-24 text-white font-bold rounded-lg cursor-pointer focus:outline-none transition ${
-            connected
-              ? "bg-gray-500 hover:bg-gray-600"
-              : searching
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-          }`}
-          disabled={searching}
-        >
-          {connected ? (stopTapCount === 0 ? "Stop" : "stop??") : "Start"}
-        </button>
+  onClick={handleStartStopClick}
+  className={`basis-24 text-white font-bold rounded-lg cursor-pointer focus:outline-none transition ${
+    connected
+      ? "bg-gray-500 hover:bg-gray-600"
+      : searching
+        ? "bg-gray-500 hover:bg-gray-600"
+        : "bg-blue-600 hover:bg-blue-700"
+  }`}
+>
+  {connected
+    ? stopTapCount === 0
+      ? "Stop"
+      : "Stop??"
+    : searching
+      ? "Cancel"
+      : "Start"}
+</button>
+
 
         <input
           type="text"
@@ -165,7 +182,7 @@ const ConnectStrangersApp = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={onInputKeyDown}
-          className="flex-grow p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-grow p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-gray-500"
         />
       </div>
     </div>
